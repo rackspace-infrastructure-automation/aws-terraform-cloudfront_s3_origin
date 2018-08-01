@@ -13,11 +13,6 @@ resource "aws_s3_bucket" "cloudfront_s3bucket" {
   acl    = "public-read"
 }
 
-resource "aws_s3_bucket" "cloudfront_s3bucket_logs" {
-  bucket = "${random_string.cloudfront_rstring.result}-cf-distro-log-bucket"
-  acl    = "private"
-}
-
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "origin accessid for cloudfront"
 }
