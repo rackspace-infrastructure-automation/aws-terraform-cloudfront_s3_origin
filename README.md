@@ -15,14 +15,13 @@ This modules creates an AWS CloudFront distribution with S3 origin
 | cloudfront_default_certificate | if you want viewers to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution. Specify this, acm_certificate_arn, or iam_certificate_id. | string | `` | no |
 | comment | Any comments you want to include about the distribution. (OPTIONAL) | string | `` | no |
 | compress | Indicates whether CloudFront automatically compresses certain files for this cache behavior. (OPTIONAL) | string | `false` | no |
+| custom_error_response | (Optional) - List of one or more custom error response element maps | list | `<list>` | no |
 | custom_header | One or more sub-resources with name and value parameters that specify header data that will be sent to the origin | list | `<list>` | no |
 | default_root_object | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL. | string | `` | no |
 | default_ttl | The default time in seconds that objects stay in CloudFront caches before CloudFront forwards another request to your custom origin to determine whether the object has been updated. | string | `3600` | no |
 | domain_name | The DNS domain name of either the S3 bucket, or web site of your custom origin. | string | `` | no |
 | enabled | Whether the distribution is enabled to accept end user requests for content. | string | `true` | no |
 | environment | Application environment for which this is being created. one of: ('Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test') | string | `Development` | no |
-| error_caching_min_ttl | (Optional) - The minimum amount of time you want HTTP error codes to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. | string | `` | no |
-| error_code | (Required) - The 4xx or 5xx HTTP status code that you want to customize. | string | `` | no |
 | forward | pecifies whether you want CloudFront to forward cookies to the origin that is associated with this cache behavior. You can specify all, none or whitelist. If whitelist, you must include the subsequent whitelisted_names | string | `all` | no |
 | headers | Specifies the headers that you want Amazon CloudFront to forward to the origin for this cache behavior. (OPTIONAL) | list | `<list>` | no |
 | http_version | The maximum HTTP version to support on the distribution. Allowed values are http1.1 and http2. The default is http2. | string | `http2` | no |
@@ -43,8 +42,6 @@ This modules creates an AWS CloudFront distribution with S3 origin
 | price_class | The price class for this distribution. One of PriceClass_All, PriceClass_200, PriceClass_100. | string | `PriceClass_All` | no |
 | query_string | Indicates whether you want CloudFront to forward query strings to the origin that is associated with this cache behavior. | string | `false` | no |
 | query_string_cache_keys | When specified, along with a value of true for query_string, all query strings are forwarded, however only the query string keys listed in this argument are cached. When omitted with a value of true for query_string, all query string keys are cached. (OPTIONAL) | list | `<list>` | no |
-| response_code | (Optional) - The minimum amount of time you want HTTP error codes to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. | string | `` | no |
-| response_page_path | (Optional) - The path of the custom error page (for example, /custom_404.html). | string | `` | no |
 | restriction_type | The method that you want to use to restrict distribution of your content by country: none, whitelist, or blacklist. | string | `` | no |
 | smooth_streaming | Indicates whether you want to distribute media files in Microsoft Smooth Streaming format using the origin that is associated with this cache behavior. (OPTIONAL) | string | `false` | no |
 | ssl_support_method | Specifies how you want CloudFront to serve HTTPS requests. One of vip or sni-only. Required if you specify acm_certificate_arn or iam_certificate_id. NOTE: vip causes CloudFront to use a dedicated IP address and may incur extra charges. | string | `sni-only` | no |
