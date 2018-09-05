@@ -90,7 +90,7 @@ module "cloudfront_s3_origin" {
       error_caching_min_ttl = "30"
     },
     {
-      error_code            = "404"
+      error_code            = "403"
       error_caching_min_ttl = "30"
       response_code         = "200"
       response_page_path    = "/error_page.html"
