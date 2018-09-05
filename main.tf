@@ -19,7 +19,7 @@ locals {
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution" {
-  aliases = "${var.aliases}"
+  aliases = ["${var.aliases}"]
 
   default_cache_behavior {
     allowed_methods = "${var.allowed_methods}"
