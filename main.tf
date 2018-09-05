@@ -19,7 +19,7 @@ locals {
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution" {
-  aliases = "${var.aliases}"
+  aliases = ["${var.aliases}"]
 
   default_cache_behavior {
     allowed_methods = "${var.allowed_methods}"
@@ -55,6 +55,8 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
   is_ipv6_enabled     = "${var.is_ipv6_enabled}"
 
   logging_config = ["${local.bucket_logging[local.bucket_logging_config]}"]
+
+  custom_error_response = ["${var.custom_error_response}"]
 
   origin {
     domain_name   = "${var.domain_name}"

@@ -276,3 +276,19 @@ variable "web_acl_id" {
   type        = "string"
   default     = ""
 }
+
+# Custom Error Response
+# http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/custom-error-pages.html#custom-error-pages-procedure
+# https://www.terraform.io/docs/providers/aws/r/cloudfront_distribution.html#custom-error-response-arguments
+#
+# error_code (Required) - The 4xx or 5xx HTTP status code that you want to customize.
+# error_caching_min_ttl (Optional) - The minimum amount of time you want HTTP error codes to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated.
+# response_code (Optional) - The HTTP status code that you want CloudFront to return with the custom error page to the viewer.
+# response_page_path (Optional) - The path of the custom error page (for example, /custom_404.html).
+# Note, response_code and response_page_path must be used together, if either is specified.
+
+variable "custom_error_response" {
+  description = "(Optional) - List of one or more custom error response element maps"
+  type        = "list"
+  default     = []
+}
