@@ -44,8 +44,6 @@ resource "aws_s3_bucket_policy" "cloudfront_s3bucket_policy" {
   policy = "${data.aws_iam_policy_document.s3_policy.json}"
 }
 
-alias_domain = "testdomain.${random_string.cloudfront_rstring.result}.example.com"
-
 module "cloudfront_s3_origin" {
   source              = "../../module"
   domain_name         = "${aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name}"
@@ -56,7 +54,7 @@ module "cloudfront_s3_origin" {
 
   bucket_logging = false
 
-  aliases = ["${local.alias_domain}"]
+  aliases = ["testdomain.${random_string.cloudfront_rstring.result}.example.com"]
 
   # Origin access id
   origin_access_identity = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
