@@ -86,8 +86,9 @@ module "cloudfront_s3_origin" {
   cloudfront_default_certificate = true
 
   # Custom Error Response
-  error_code = "404"
+  error_code            = "404"
   error_caching_min_ttl = "30"
+
   # response_code = ""
   # response_page_path = ""
 }

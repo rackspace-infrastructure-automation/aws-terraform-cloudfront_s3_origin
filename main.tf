@@ -19,14 +19,15 @@ locals {
 
   custom_error = {
     enabled = [{
-      error_code = "${var.error_code}"
+      error_code            = "${var.error_code}"
       error_caching_min_ttl = "${var.error_caching_min_ttl}"
-      response_code = "${var.response_code}"
-      response_page_path = "${var.response_page_path}"
+      response_code         = "${var.response_code}"
+      response_page_path    = "${var.response_page_path}"
     }]
 
     disabled = "${list()}"
   }
+
   custom_error_config = "${var.error_code ? "enabled" : "disabled"}"
 }
 
