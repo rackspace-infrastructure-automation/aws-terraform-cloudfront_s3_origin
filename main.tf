@@ -16,19 +16,6 @@ locals {
   }
 
   bucket_logging_config = "${var.bucket_logging ? "enabled" : "disabled"}"
-
-  custom_error = {
-    enabled = [{
-      error_code            = "${var.error_code}"
-      error_caching_min_ttl = "${var.error_caching_min_ttl}"
-      response_code         = "${var.response_code}"
-      response_page_path    = "${var.response_page_path}"
-    }]
-
-    disabled = "${list()}"
-  }
-
-  custom_error_config = "${var.error_code ? "enabled" : "disabled"}"
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution" {
@@ -69,7 +56,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
 
   logging_config = ["${local.bucket_logging[local.bucket_logging_config]}"]
 
-  custom_error_response = ["${local.custom_error[local.custom_error_config]}"]
+  custom_error_response = ["${var.custom_error_response}"]
 
   origin {
     domain_name   = "${var.domain_name}"
