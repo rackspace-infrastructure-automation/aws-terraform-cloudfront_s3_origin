@@ -88,13 +88,13 @@ module "cloudfront_s3_origin" {
   # Custom Error Response
   custom_error_response = [
     {
-      error_code = "404"
+      error_code            = "404"
       error_caching_min_ttl = "30"
     },
     {
-      error_code = "404"
+      error_code            = "404"
       error_caching_min_ttl = "30"
-      response_code = "200"
-    }
+      response_code         = "200"
+    },
   ]
 }
