@@ -286,7 +286,7 @@ variable "web_acl_id" {
 # response_code (Optional) - The HTTP status code that you want CloudFront to return with the custom error page to the viewer.
 # response_page_path (Optional) - The path of the custom error page (for example, /custom_404.html).
 
-variable "custom_error_list" {
+variable "custom_error_response" {
   description = "(Optional) - List of one or more custom error response element maps"
   type        = "list"
   default     = []
