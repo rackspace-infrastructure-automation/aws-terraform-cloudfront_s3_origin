@@ -57,7 +57,8 @@ module "cloudfront_s3_origin" {
   aliases = ["testdomain.${random_string.cloudfront_rstring.result}.example.com"]
 
   # Origin access id
-  origin_access_identity = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+  origin_access_identity          = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+  origin_access_identity_provided = true
 
   # default cache behavior
   allowed_methods  = ["GET", "HEAD"]
