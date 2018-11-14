@@ -226,6 +226,12 @@ variable "origin_access_identity" {
   default     = ""
 }
 
+variable "origin_access_identity_provided" {
+  description = "origin_access_identity has been provided"
+  type        = "string"
+  default     = false
+}
+
 # Restrictions
 variable "locations" {
   description = "The two-letter, uppercase country code for a country that you want to include in your blacklist or whitelist."
