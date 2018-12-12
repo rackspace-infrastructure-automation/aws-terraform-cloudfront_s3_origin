@@ -54,10 +54,11 @@ module "cloudfront_s3_origin" {
 
   bucket_logging = false
 
-  aliases = ["testdomain.testing.example.com"]
+  aliases = ["testdomain.${random_string.cloudfront_rstring.result}.example.com"]
 
   # Origin access id
-  origin_access_identity = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+  origin_access_identity          = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+  origin_access_identity_provided = true
 
   # default cache behavior
   allowed_methods  = ["GET", "HEAD"]
@@ -82,4 +83,18 @@ module "cloudfront_s3_origin" {
 
   # Certificate
   cloudfront_default_certificate = true
+
+  # Custom Error Response
+  custom_error_response = [
+    {
+      error_code            = "404"
+      error_caching_min_ttl = "30"
+    },
+    {
+      error_code            = "403"
+      error_caching_min_ttl = "30"
+      response_code         = "200"
+      response_page_path    = "/error_page.html"
+    },
+  ]
 }

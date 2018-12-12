@@ -1,49 +1,49 @@
 output "id" {
   description = "The identifier for the distribution."
-  value       = "${aws_cloudfront_distribution.cf_distribution.id}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.id, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.id, list("")), 0)}"
 }
 
 output "arn" {
   description = "The ARN (Amazon Resource Name) for the distribution."
-  value       = "${aws_cloudfront_distribution.cf_distribution.arn}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.arn, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.arn, list("")), 0)}"
 }
 
 output "caller_reference" {
   description = "Internal value used by CloudFront to allow future updates to the distribution configuration."
-  value       = "${aws_cloudfront_distribution.cf_distribution.caller_reference}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.caller_reference, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.caller_reference, list("")), 0)}"
 }
 
 output "status" {
   description = "The current status of the distribution."
-  value       = "${aws_cloudfront_distribution.cf_distribution.status}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.status, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.status, list("")), 0)}"
 }
 
 output "active_trusted_signers" {
   description = "The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs."
-  value       = "${aws_cloudfront_distribution.cf_distribution.active_trusted_signers}"
+  value       = "${local.active_trusted_signers[0]}"
 }
 
 output "domain_name" {
   description = "The domain name corresponding to the distribution."
-  value       = "${aws_cloudfront_distribution.cf_distribution.domain_name}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.domain_name, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.domain_name, list("")), 0)}"
 }
 
 output "last_modified_time" {
   description = "The date and time the distribution was last modified."
-  value       = "${aws_cloudfront_distribution.cf_distribution.last_modified_time}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.last_modified_time, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.last_modified_time), 0)}"
 }
 
 output "in_progress_validation_batches" {
   description = "The number of invalidation batches currently in progress."
-  value       = "${aws_cloudfront_distribution.cf_distribution.in_progress_validation_batches}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.in_progress_validation_batches, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.in_progress_validation_batches, list("")), 0)}"
 }
 
 output "etag" {
   description = "The current version of the distribution's information."
-  value       = "${aws_cloudfront_distribution.cf_distribution.etag}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.etag, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.etag, list("")), 0)}"
 }
 
 output "hosted_zone_id" {
   description = "The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to."
-  value       = "${aws_cloudfront_distribution.cf_distribution.hosted_zone_id}"
+  value       = "${element(coalescelist(aws_cloudfront_distribution.cf_distribution.*.hosted_zone_id, aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.hosted_zone_id, list("")), 0)}"
 }
