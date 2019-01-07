@@ -99,11 +99,14 @@ variable "default_ttl" {
   default     = "3600"
 }
 
-variable "lambdas" {
-  description = "A map of lambda functions and triggers. See https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_LambdaFunctionAssociation.html"
-  type        = "list"
-  default     = []
-}
+# Removing this property due to issues dynamically providing these values.  Will be reenabled
+# after release of terraform v0.12 and support for dynamic config blocks.
+#
+# variable "lambdas" {
+#   description = "A map of lambda functions and triggers. See https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_LambdaFunctionAssociation.html"
+#   type        = "list"
+#   default     = []
+# }
 
 variable "max_ttl" {
   description = "The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. (OPTIONAL)"

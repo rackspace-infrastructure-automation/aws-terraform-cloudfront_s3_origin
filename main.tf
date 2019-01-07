@@ -1,3 +1,62 @@
+/**
+ *# aws-terraform-cloudfront_s3_origin
+ *
+ *This modules creates an AWS CloudFront distribution with S3 origin
+ *
+ *## Basic Usage
+ *
+ *```
+ *module "cloudfront_s3_origin" {
+ *  source              = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.0.3"
+ *  domain_name         = "${aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name}"
+ *  origin_id           = "${random_string.cloudfront_rstring.result}"
+ *  enabled             = true
+ *  comment             = "This is a test comment"
+ *  default_root_object = "index.html"
+ *
+ *  # logging config
+ *  # Bucket must already exist, can't be generated as a resource along with example.
+ *  # This is a TF bug.
+ *  # The bucket name must be the full bucket ie bucket.s3.amazonaws.com
+ *  bucket = "mybucket.s3.amazonaws.com"
+ *
+ *  prefix         = "myprefix"
+ *  bucket_logging = true
+ *
+ *  aliases = ["testdomain.testing.example.com"]
+ *
+ *  # Origin access id
+ *  origin_access_identity = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+ *
+ *  # default cache behavior
+ *  allowed_methods  = ["GET", "HEAD"]
+ *  cached_methods   = ["GET", "HEAD"]
+ *  path_pattern     = "*"
+ *  target_origin_id = "${random_string.cloudfront_rstring.result}"
+ *
+ *  # Forwarded Values
+ *  query_string = false
+ *
+ *  #Cookies
+ *  forward = "none"
+ *
+ *  viewer_protocol_policy = "redirect-to-https"
+ *  default_ttl            = "3600"
+ *
+ *  price_class = "PriceClass_200"
+ *
+ *  # restrictions
+ *  restriction_type = "whitelist"
+ *  locations        = ["US", "CA", "GB", "DE"]
+ *
+ *  # Certificate
+ *  cloudfront_default_certificate = true
+ *}
+ *```
+ *
+ * Full working references are available at [examples](examples)
+ */
+
 locals {
   tags = {
     Name            = "${var.origin_id}"
@@ -41,7 +100,10 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
       query_string_cache_keys = "${var.query_string_cache_keys}"
     }
 
-    lambda_function_association = "${var.lambdas}"
+    # Removing this property due to issues dynamically providing these values.  Will be reenabled
+    # after release of terraform v0.12 and support for dynamic config blocks.
+    #
+    # lambda_function_association = "${var.lambdas}"
 
     max_ttl                = "${var.max_ttl}"
     min_ttl                = "${var.min_ttl}"
@@ -115,7 +177,10 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
       query_string_cache_keys = "${var.query_string_cache_keys}"
     }
 
-    lambda_function_association = "${var.lambdas}"
+    # Removing this property due to issues dynamically providing these values.  Will be reenabled
+    # after release of terraform v0.12 and support for dynamic config blocks.
+    #
+    # lambda_function_association = "${var.lambdas}"
 
     max_ttl                = "${var.max_ttl}"
     min_ttl                = "${var.min_ttl}"
