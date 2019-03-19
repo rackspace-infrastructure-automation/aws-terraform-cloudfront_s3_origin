@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "us-west-2"
+  version = "~> 2.2"
+  region  = "us-west-2"
 }
 
 resource "random_string" "cloudfront_rstring" {
