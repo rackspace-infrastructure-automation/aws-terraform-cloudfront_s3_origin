@@ -54,7 +54,7 @@ module "cloudfront_s3_origin" {
   default_root_object = "index.html"
 
   bucket_logging = false
-  
+
   # Origin access id
   origin_access_identity          = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
   origin_access_identity_provided = true
