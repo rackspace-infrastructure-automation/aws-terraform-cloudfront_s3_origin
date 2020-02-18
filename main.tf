@@ -59,45 +59,50 @@
 
 locals {
   tags = {
-    Name            = "${var.origin_id}"
+    Name            = var.origin_id
     ServiceProvider = "Rackspace"
-    Environment     = "${var.environment}"
+    Environment     = var.environment
   }
 
   bucket_logging = {
-    enabled = [{
-      bucket          = "${var.bucket}"
-      include_cookies = "${var.include_cookies}"
-      prefix          = "${var.prefix}"
-    }]
-
-    disabled = "${list()}"
+    enabled = [
+      {
+        bucket          = var.bucket
+        include_cookies = var.include_cookies
+        prefix          = var.prefix
+      },
+    ]
+    disabled = []
   }
 
-  bucket_logging_config = "${var.bucket_logging ? "enabled" : "disabled"}"
+  bucket_logging_config = var.bucket_logging ? "enabled" : "disabled"
 
-  active_trusted_signers = "${coalescelist(aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.active_trusted_signers, aws_cloudfront_distribution.cf_distribution.*.active_trusted_signers, list(""))}"
+  active_trusted_signers = coalescelist(
+    aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.active_trusted_signers,
+    aws_cloudfront_distribution.cf_distribution.*.active_trusted_signers,
+    [""],
+  )
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution" {
-  count   = "${var.origin_access_identity_provided ? 1 : 0}"
-  aliases = ["${var.aliases}"]
+  count   = var.origin_access_identity_provided ? 1 : 0
+  aliases = var.aliases
 
   default_cache_behavior {
-    allowed_methods = "${var.allowed_methods}"
-    cached_methods  = "${var.cached_methods}"
-    compress        = "${var.compress}"
-    default_ttl     = "${var.default_ttl}"
+    allowed_methods = var.allowed_methods
+    cached_methods  = var.cached_methods
+    compress        = var.compress
+    default_ttl     = var.default_ttl
 
     forwarded_values {
       cookies {
-        forward           = "${var.forward}"
-        whitelisted_names = "${var.whitelisted_names}"
+        forward           = var.forward
+        whitelisted_names = var.whitelisted_names
       }
 
-      headers                 = "${var.headers}"
-      query_string            = "${var.query_string}"
-      query_string_cache_keys = "${var.query_string_cache_keys}"
+      headers                 = var.headers
+      query_string            = var.query_string
+      query_string_cache_keys = var.query_string_cache_keys
     }
 
     # Removing this property due to issues dynamically providing these values.  Will be reenabled
@@ -105,76 +110,112 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
     #
     # lambda_function_association = "${var.lambdas}"
 
-    max_ttl                = "${var.max_ttl}"
-    min_ttl                = "${var.min_ttl}"
-    smooth_streaming       = "${var.smooth_streaming}"
-    target_origin_id       = "${var.target_origin_id}"
-    trusted_signers        = "${var.trusted_signers}"
-    viewer_protocol_policy = "${var.viewer_protocol_policy}"
+    max_ttl                = var.max_ttl
+    min_ttl                = var.min_ttl
+    smooth_streaming       = var.smooth_streaming
+    target_origin_id       = var.target_origin_id
+    trusted_signers        = var.trusted_signers
+    viewer_protocol_policy = var.viewer_protocol_policy
   }
 
-  comment             = "${var.comment}"
-  default_root_object = "${var.default_root_object}"
-  enabled             = "${var.enabled}"
-  http_version        = "${var.http_version}"
-  is_ipv6_enabled     = "${var.is_ipv6_enabled}"
+  comment             = var.comment
+  default_root_object = var.default_root_object
+  enabled             = var.enabled
+  http_version        = var.http_version
+  is_ipv6_enabled     = var.is_ipv6_enabled
 
-  logging_config = ["${local.bucket_logging[local.bucket_logging_config]}"]
+  dynamic "logging_config" {
+    for_each = [local.bucket_logging[local.bucket_logging_config]]
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
 
-  custom_error_response = ["${var.custom_error_response}"]
-
-  origin {
-    domain_name   = "${var.domain_name}"
-    custom_header = "${var.custom_header}"
-    origin_id     = "${var.origin_id}"
-    origin_path   = "${var.origin_path}"
-
-    s3_origin_config {
-      origin_access_identity = "${var.origin_access_identity}"
+      bucket          = logging_config.value.bucket
+      include_cookies = lookup(logging_config.value, "include_cookies", null)
+      prefix          = lookup(logging_config.value, "prefix", null)
     }
   }
 
-  price_class = "${var.price_class}"
+  dynamic "custom_error_response" {
+    for_each = [var.custom_error_response]
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
+
+      error_caching_min_ttl = lookup(custom_error_response.value, "error_caching_min_ttl", null)
+      error_code            = custom_error_response.value.error_code
+      response_code         = lookup(custom_error_response.value, "response_code", null)
+      response_page_path    = lookup(custom_error_response.value, "response_page_path", null)
+    }
+  }
+
+  origin {
+    domain_name = var.domain_name
+    dynamic "custom_header" {
+      for_each = var.custom_header
+      content {
+        # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+        # which keys might be set in maps assigned here, so it has
+        # produced a comprehensive set here. Consider simplifying
+        # this after confirming which keys can be set in practice.
+
+        name  = custom_header.value.name
+        value = custom_header.value.value
+      }
+    }
+    origin_id   = var.origin_id
+    origin_path = var.origin_path
+
+    s3_origin_config {
+      origin_access_identity = var.origin_access_identity
+    }
+  }
+
+  price_class = var.price_class
 
   restrictions {
     geo_restriction {
-      locations        = "${var.locations}"
-      restriction_type = "${var.restriction_type}"
+      locations        = var.locations
+      restriction_type = var.restriction_type
     }
   }
 
-  tags = "${merge(var.tags, local.tags)}"
+  tags = merge(var.tags, local.tags)
 
   viewer_certificate {
-    acm_certificate_arn            = "${var.acm_certificate_arn}"
-    cloudfront_default_certificate = "${var.cloudfront_default_certificate}"
-    iam_certificate_id             = "${var.iam_certificate_id}"
-    minimum_protocol_version       = "${var.minimum_protocol_version}"
-    ssl_support_method             = "${var.ssl_support_method}"
+    acm_certificate_arn            = var.acm_certificate_arn
+    cloudfront_default_certificate = var.cloudfront_default_certificate
+    iam_certificate_id             = var.iam_certificate_id
+    minimum_protocol_version       = var.minimum_protocol_version
+    ssl_support_method             = var.ssl_support_method
   }
 
-  web_acl_id = "${var.web_acl_id}"
+  web_acl_id = var.web_acl_id
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
-  count   = "${var.origin_access_identity_provided ? 0 : 1}"
-  aliases = ["${var.aliases}"]
+  count   = var.origin_access_identity_provided ? 0 : 1
+  aliases = var.aliases
 
   default_cache_behavior {
-    allowed_methods = "${var.allowed_methods}"
-    cached_methods  = "${var.cached_methods}"
-    compress        = "${var.compress}"
-    default_ttl     = "${var.default_ttl}"
+    allowed_methods = var.allowed_methods
+    cached_methods  = var.cached_methods
+    compress        = var.compress
+    default_ttl     = var.default_ttl
 
     forwarded_values {
       cookies {
-        forward           = "${var.forward}"
-        whitelisted_names = "${var.whitelisted_names}"
+        forward           = var.forward
+        whitelisted_names = var.whitelisted_names
       }
 
-      headers                 = "${var.headers}"
-      query_string            = "${var.query_string}"
-      query_string_cache_keys = "${var.query_string_cache_keys}"
+      headers                 = var.headers
+      query_string            = var.query_string
+      query_string_cache_keys = var.query_string_cache_keys
     }
 
     # Removing this property due to issues dynamically providing these values.  Will be reenabled
@@ -182,49 +223,86 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
     #
     # lambda_function_association = "${var.lambdas}"
 
-    max_ttl                = "${var.max_ttl}"
-    min_ttl                = "${var.min_ttl}"
-    smooth_streaming       = "${var.smooth_streaming}"
-    target_origin_id       = "${var.target_origin_id}"
-    trusted_signers        = "${var.trusted_signers}"
-    viewer_protocol_policy = "${var.viewer_protocol_policy}"
+    max_ttl                = var.max_ttl
+    min_ttl                = var.min_ttl
+    smooth_streaming       = var.smooth_streaming
+    target_origin_id       = var.target_origin_id
+    trusted_signers        = var.trusted_signers
+    viewer_protocol_policy = var.viewer_protocol_policy
   }
 
-  comment             = "${var.comment}"
-  default_root_object = "${var.default_root_object}"
-  enabled             = "${var.enabled}"
-  http_version        = "${var.http_version}"
-  is_ipv6_enabled     = "${var.is_ipv6_enabled}"
+  comment             = var.comment
+  default_root_object = var.default_root_object
+  enabled             = var.enabled
+  http_version        = var.http_version
+  is_ipv6_enabled     = var.is_ipv6_enabled
 
-  logging_config = ["${local.bucket_logging[local.bucket_logging_config]}"]
+  dynamic "logging_config" {
+    for_each = [local.bucket_logging[local.bucket_logging_config]]
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
 
-  custom_error_response = ["${var.custom_error_response}"]
-
-  origin {
-    domain_name   = "${var.domain_name}"
-    custom_header = "${var.custom_header}"
-    origin_id     = "${var.origin_id}"
-    origin_path   = "${var.origin_path}"
-  }
-
-  price_class = "${var.price_class}"
-
-  restrictions {
-    geo_restriction {
-      locations        = "${var.locations}"
-      restriction_type = "${var.restriction_type}"
+      bucket          = logging_config.value.bucket
+      include_cookies = lookup(logging_config.value, "include_cookies", null)
+      prefix          = lookup(logging_config.value, "prefix", null)
     }
   }
 
-  tags = "${merge(var.tags, local.tags)}"
+  dynamic "custom_error_response" {
+    for_each = [var.custom_error_response]
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
 
-  viewer_certificate {
-    acm_certificate_arn            = "${var.acm_certificate_arn}"
-    cloudfront_default_certificate = "${var.cloudfront_default_certificate}"
-    iam_certificate_id             = "${var.iam_certificate_id}"
-    minimum_protocol_version       = "${var.minimum_protocol_version}"
-    ssl_support_method             = "${var.ssl_support_method}"
+      error_caching_min_ttl = lookup(custom_error_response.value, "error_caching_min_ttl", null)
+      error_code            = custom_error_response.value.error_code
+      response_code         = lookup(custom_error_response.value, "response_code", null)
+      response_page_path    = lookup(custom_error_response.value, "response_page_path", null)
+    }
   }
 
-  web_acl_id = "${var.web_acl_id}"
+  origin {
+    domain_name = var.domain_name
+    dynamic "custom_header" {
+      for_each = var.custom_header
+      content {
+        # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+        # which keys might be set in maps assigned here, so it has
+        # produced a comprehensive set here. Consider simplifying
+        # this after confirming which keys can be set in practice.
+
+        name  = custom_header.value.name
+        value = custom_header.value.value
+      }
+    }
+    origin_id   = var.origin_id
+    origin_path = var.origin_path
+  }
+
+  price_class = var.price_class
+
+  restrictions {
+    geo_restriction {
+      locations        = var.locations
+      restriction_type = var.restriction_type
+    }
+  }
+
+  tags = merge(var.tags, local.tags)
+
+  viewer_certificate {
+    acm_certificate_arn            = var.acm_certificate_arn
+    cloudfront_default_certificate = var.cloudfront_default_certificate
+    iam_certificate_id             = var.iam_certificate_id
+    minimum_protocol_version       = var.minimum_protocol_version
+    ssl_support_method             = var.ssl_support_method
+  }
+
+  web_acl_id = var.web_acl_id
 }
+

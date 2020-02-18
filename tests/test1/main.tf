@@ -25,30 +25,30 @@ data "aws_iam_policy_document" "s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn}"]
+      identifiers = [aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
     }
   }
 
   statement {
     actions   = ["s3:ListBucket"]
-    resources = ["${aws_s3_bucket.cloudfront_s3bucket.arn}"]
+    resources = [aws_s3_bucket.cloudfront_s3bucket.arn]
 
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn}"]
+      identifiers = [aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
     }
   }
 }
 
 resource "aws_s3_bucket_policy" "cloudfront_s3bucket_policy" {
-  bucket = "${aws_s3_bucket.cloudfront_s3bucket.id}"
-  policy = "${data.aws_iam_policy_document.s3_policy.json}"
+  bucket = aws_s3_bucket.cloudfront_s3bucket.id
+  policy = data.aws_iam_policy_document.s3_policy.json
 }
 
 module "cloudfront_s3_origin" {
   source              = "../../module"
-  domain_name         = "${aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name}"
-  origin_id           = "${random_string.cloudfront_rstring.result}"
+  domain_name         = aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name
+  origin_id           = random_string.cloudfront_rstring.result
   enabled             = true
   comment             = "This is a test comment"
   default_root_object = "index.html"
@@ -56,14 +56,14 @@ module "cloudfront_s3_origin" {
   bucket_logging = false
 
   # Origin access id
-  origin_access_identity          = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+  origin_access_identity          = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
   origin_access_identity_provided = true
 
   # default cache behavior
   allowed_methods  = ["GET", "HEAD"]
   cached_methods   = ["GET", "HEAD"]
   path_pattern     = "*"
-  target_origin_id = "${random_string.cloudfront_rstring.result}"
+  target_origin_id = random_string.cloudfront_rstring.result
 
   # Forwarded Values
   query_string = false
