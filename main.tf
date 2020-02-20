@@ -125,13 +125,8 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
   is_ipv6_enabled     = var.is_ipv6_enabled
 
   dynamic "logging_config" {
-    for_each = [local.bucket_logging[local.bucket_logging_config]]
+    for_each = local.bucket_logging[local.bucket_logging_config]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       bucket          = logging_config.value.bucket
       include_cookies = lookup(logging_config.value, "include_cookies", null)
       prefix          = lookup(logging_config.value, "prefix", null)
@@ -139,13 +134,8 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
   }
 
   dynamic "custom_error_response" {
-    for_each = [var.custom_error_response]
+    for_each = var.custom_error_response
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       error_caching_min_ttl = lookup(custom_error_response.value, "error_caching_min_ttl", null)
       error_code            = custom_error_response.value.error_code
       response_code         = lookup(custom_error_response.value, "response_code", null)
@@ -158,11 +148,6 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
     dynamic "custom_header" {
       for_each = var.custom_header
       content {
-        # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-        # which keys might be set in maps assigned here, so it has
-        # produced a comprehensive set here. Consider simplifying
-        # this after confirming which keys can be set in practice.
-
         name  = custom_header.value.name
         value = custom_header.value.value
       }
@@ -238,13 +223,8 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
   is_ipv6_enabled     = var.is_ipv6_enabled
 
   dynamic "logging_config" {
-    for_each = [local.bucket_logging[local.bucket_logging_config]]
+    for_each = local.bucket_logging[local.bucket_logging_config]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       bucket          = logging_config.value.bucket
       include_cookies = lookup(logging_config.value, "include_cookies", null)
       prefix          = lookup(logging_config.value, "prefix", null)
@@ -252,13 +232,8 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
   }
 
   dynamic "custom_error_response" {
-    for_each = [var.custom_error_response]
+    for_each = var.custom_error_response
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       error_caching_min_ttl = lookup(custom_error_response.value, "error_caching_min_ttl", null)
       error_code            = custom_error_response.value.error_code
       response_code         = lookup(custom_error_response.value, "response_code", null)
@@ -271,11 +246,6 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
     dynamic "custom_header" {
       for_each = var.custom_header
       content {
-        # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-        # which keys might be set in maps assigned here, so it has
-        # produced a comprehensive set here. Consider simplifying
-        # this after confirming which keys can be set in practice.
-
         name  = custom_header.value.name
         value = custom_header.value.value
       }
@@ -305,4 +275,3 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
 
   web_acl_id = var.web_acl_id
 }
-

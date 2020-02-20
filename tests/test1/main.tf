@@ -46,7 +46,7 @@ resource "aws_s3_bucket_policy" "cloudfront_s3bucket_policy" {
 }
 
 module "cloudfront_s3_origin" {
-  source              = "../../module"
+  source              = "../../"
   domain_name         = aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name
   origin_id           = random_string.cloudfront_rstring.result
   enabled             = true
@@ -86,13 +86,13 @@ module "cloudfront_s3_origin" {
   # Custom Error Response
   custom_error_response = [
     {
-      error_code            = "404"
-      error_caching_min_ttl = "30"
+      error_code            = 404
+      error_caching_min_ttl = 30
     },
     {
-      error_code            = "403"
-      error_caching_min_ttl = "30"
-      response_code         = "200"
+      error_code            = 403
+      error_caching_min_ttl = 30
+      response_code         = 200
       response_page_path    = "/error_page.html"
     },
   ]

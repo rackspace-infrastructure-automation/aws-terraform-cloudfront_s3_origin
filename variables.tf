@@ -19,7 +19,7 @@ variable "tags" {
 # You must use something like bucket = "MyExistingbucket"
 variable "bucket_logging" {
   description = "Enable logging to an S3 Bucket. If this is set you must configure below."
-  type        = string
+  type        = bool
   default     = false
 }
 
@@ -52,13 +52,13 @@ variable "default_root_object" {
 
 variable "enabled" {
   description = "Whether the distribution is enabled to accept end user requests for content."
-  type        = string
+  type        = bool
   default     = true
 }
 
 variable "is_ipv6_enabled" {
   description = "Whether the IPv6 is enabled for the distribution. (OPTIONAL)"
-  type        = string
+  type        = bool
   default     = false
 }
 
@@ -89,14 +89,14 @@ variable "cached_methods" {
 
 variable "compress" {
   description = "Indicates whether CloudFront automatically compresses certain files for this cache behavior. (OPTIONAL)"
-  type        = string
+  type        = bool
   default     = false
 }
 
 variable "default_ttl" {
   description = "The default time in seconds that objects stay in CloudFront caches before CloudFront forwards another request to your custom origin to determine whether the object has been updated."
-  type        = string
-  default     = "3600"
+  type        = number
+  default     = 3600
 }
 
 # Removing this property due to issues dynamically providing these values.  Will be reenabled
@@ -110,14 +110,14 @@ variable "default_ttl" {
 
 variable "max_ttl" {
   description = "The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. (OPTIONAL)"
-  type        = string
-  default     = "86400"
+  type        = number
+  default     = 86400
 }
 
 variable "min_ttl" {
   description = "The minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. (OPTIONAL)"
-  type        = string
-  default     = "0"
+  type        = number
+  default     = 0
 }
 
 variable "path_pattern" {
@@ -127,7 +127,7 @@ variable "path_pattern" {
 
 variable "smooth_streaming" {
   description = "Indicates whether you want to distribute media files in Microsoft Smooth Streaming format using the origin that is associated with this cache behavior. (OPTIONAL)"
-  type        = string
+  type        = bool
   default     = false
 }
 
@@ -169,7 +169,7 @@ variable "headers" {
 # Default Cache Behavior - Forwarded Values - Query String
 variable "query_string" {
   description = "Indicates whether you want CloudFront to forward query strings to the origin that is associated with this cache behavior."
-  type        = string
+  type        = bool
   default     = false
 }
 
@@ -189,7 +189,7 @@ variable "bucket" {
 
 variable "include_cookies" {
   description = "Indicates whether CloudFront includes cookies in access logs."
-  type        = string
+  type        = bool
   default     = false
 }
 
@@ -231,7 +231,7 @@ variable "origin_access_identity" {
 
 variable "origin_access_identity_provided" {
   description = "origin_access_identity has been provided"
-  type        = string
+  type        = bool
   default     = false
 }
 
@@ -298,7 +298,6 @@ variable "web_acl_id" {
 
 variable "custom_error_response" {
   description = "(Optional) - List of one or more custom error response element maps"
-  type        = list(string)
+  type        = list(map(string))
   default     = []
 }
-
