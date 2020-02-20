@@ -50,44 +50,29 @@ resource "aws_s3_bucket_policy" "cloudfront_s3bucket_policy" {
 }
 
 module "cloudfront_s3_origin" {
-  source              = "../../"
-  domain_name         = aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name
-  origin_id           = random_string.cloudfront_rstring.result
-  enabled             = true
-  comment             = "This is a test comment"
-  default_root_object = "index.html"
+  source = "../../module"
 
-  bucket_logging = false
-
-  # Origin access id
+  allowed_methods                 = ["GET", "HEAD"]
+  bucket_logging                  = false
+  cached_methods                  = ["GET", "HEAD"]
+  cloudfront_default_certificate  = true
+  comment                         = "This is a test comment"
+  default_root_object             = "index.html"
+  default_ttl                     = 3600
+  domain_name                     = aws_s3_bucket.cloudfront_s3bucket.bucket_regional_domain_name
+  enabled                         = true
+  forward                         = "none"
+  locations                       = ["US", "CA", "GB", "DE"]
   origin_access_identity          = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
   origin_access_identity_provided = true
+  origin_id                       = random_string.cloudfront_rstring.result
+  path_pattern                    = "*"
+  price_class                     = "PriceClass_200"
+  query_string                    = false
+  restriction_type                = "whitelist"
+  target_origin_id                = random_string.cloudfront_rstring.result
+  viewer_protocol_policy          = "redirect-to-https"
 
-  # default cache behavior
-  allowed_methods  = ["GET", "HEAD"]
-  cached_methods   = ["GET", "HEAD"]
-  path_pattern     = "*"
-  target_origin_id = random_string.cloudfront_rstring.result
-
-  # Forwarded Values
-  query_string = false
-
-  #Cookies
-  forward = "none"
-
-  viewer_protocol_policy = "redirect-to-https"
-  default_ttl            = "3600"
-
-  price_class = "PriceClass_200"
-
-  # restrictions
-  restriction_type = "whitelist"
-  locations        = ["US", "CA", "GB", "DE"]
-
-  # Certificate
-  cloudfront_default_certificate = true
-
-  # Custom Error Response
   custom_error_response = [
     {
       error_code            = 404
