@@ -1,4 +1,3 @@
-# Environment and tagging.
 variable "environment" {
   description = "Application environment for which this is being created. one of: ('Development', 'Integration', 'PreProduction', 'Production', 'QA', 'Staging', 'Test')"
   type        = string
@@ -11,21 +10,12 @@ variable "tags" {
   default     = {}
 }
 
-# ###################################################
-
-# Enable Logging
-# If you enable logging the bucket must already exist. You will get an error if you try
-# to use a dynamic bucket like "${aws_s3_bucket.cloudfront_log_s3bucket.bucket_domain_name}"
-# You must use something like bucket = "MyExistingbucket"
 variable "bucket_logging" {
   description = "Enable logging to an S3 Bucket. If this is set you must configure below."
   type        = bool
   default     = false
 }
 
-# ###################################################
-
-# Top-Level parameters
 variable "aliases" {
   description = "Extra CNAMEs (alternate domain names), if any, for this distribution. (OPTIONAL)"
   type        = list(string)
@@ -74,7 +64,6 @@ variable "price_class" {
   default     = "PriceClass_All"
 }
 
-# Default Cache Behavior
 variable "allowed_methods" {
   description = "HTTP methods that CloudFront processes and forwards to your Amazon S3 bucket or your custom origin. Allowed values are: [\"HEAD\", \"GET\"], [\"GET\", \"HEAD\", \"OPTIONS\"], or [\"DELETE\", \"GET\", \"HEAD\", \"OPTIONS\", \"PATCH\", \"POST\", \"PUT\"]."
   type        = list(string)
@@ -159,28 +148,24 @@ variable "whitelisted_names" {
   default     = []
 }
 
-# Default Cache Behavior - Forwarded Values - Headers
 variable "headers" {
   description = "Specifies the headers that you want Amazon CloudFront to forward to the origin for this cache behavior. (OPTIONAL)"
   type        = list(string)
   default     = []
 }
 
-# Default Cache Behavior - Forwarded Values - Query String
 variable "query_string" {
   description = "Indicates whether you want CloudFront to forward query strings to the origin that is associated with this cache behavior."
   type        = bool
   default     = false
 }
 
-# Default Cache Behavior - Forwarded Values - Query String Cache Keys
 variable "query_string_cache_keys" {
   description = "When specified, along with a value of true for query_string, all query strings are forwarded, however only the query string keys listed in this argument are cached. When omitted with a value of true for query_string, all query string keys are cached. (OPTIONAL)"
   type        = list(string)
   default     = []
 }
 
-# S3 Logging
 variable "bucket" {
   description = "The Amazon S3 bucket address where access logs are stored"
   type        = string
@@ -222,7 +207,6 @@ variable "origin_path" {
   default     = ""
 }
 
-# Origin - S3 Origin
 variable "origin_access_identity" {
   description = "The CloudFront origin access identity to associate with the origin. You must specify the full origin ID"
   type        = string
@@ -235,7 +219,6 @@ variable "origin_access_identity_provided" {
   default     = false
 }
 
-# Restrictions
 variable "locations" {
   description = "The two-letter, uppercase country code for a country that you want to include in your blacklist or whitelist."
   type        = list(string)
@@ -248,7 +231,6 @@ variable "restriction_type" {
   default     = ""
 }
 
-# SSL: Certificate
 variable "acm_certificate_arn" {
   description = "The ARN of the AWS Certificate Manager certificate that you wish to use with this distribution. Specify this, cloudfront_default_certificate, or iam_certificate_id. The ACM certificate must be in US-EAST-1."
   type        = string

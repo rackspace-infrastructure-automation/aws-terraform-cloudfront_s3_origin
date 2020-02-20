@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
   region = "us-west-2"
 }
@@ -90,4 +94,3 @@ module "cloudfront_s3_origin" {
   # Certificate
   cloudfront_default_certificate = true
 }
-
