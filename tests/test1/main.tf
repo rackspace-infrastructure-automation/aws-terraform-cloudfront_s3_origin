@@ -3,7 +3,7 @@ terraform {
 }
 
 provider "aws" {
-  version = "~> 2.2"
+  version = "~> 2.7"
   region  = "us-west-2"
 }
 
@@ -54,6 +54,7 @@ module "cloudfront_s3_origin" {
 
   allowed_methods                 = ["GET", "HEAD"]
   bucket_logging                  = false
+  custom_header                   = [{ name = "header1", value = "value1" }, { name = "header2", value = "value2" }]
   cached_methods                  = ["GET", "HEAD"]
   cloudfront_default_certificate  = true
   comment                         = "This is a test comment"

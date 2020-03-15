@@ -3,7 +3,8 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
+  version = "~> 2.7"
+  region  = "us-west-2"
 }
 
 resource "random_string" "cloudfront_rstring" {
@@ -49,7 +50,7 @@ resource "aws_s3_bucket_policy" "cloudfront_s3bucket_policy" {
 }
 
 module "cloudfront_s3_origin" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.12.0"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.12.1"
 
   allowed_methods                 = ["GET", "HEAD"]
   bucket_logging                  = false

@@ -1,16 +1,16 @@
 # aws-terraform-cloudfront\_s3\_origin
 
-This modules creates an AWS CloudFront distribution with S3 origin  
-Enable Logging  
+This modules creates an AWS CloudFront distribution with S3 origin
+### Enable Logging  
 If you enable logging the bucket must already exist. You will get an error if you try  
-to use a dynamic bucket like "${aws\_s3\_bucket.cloudfront\_log\_s3bucket.bucket\_domain\_name}"  
-You must use something like bucket = "MyExistingbucket"
+to use a dynamic bucket like `"${aws_s3_bucket.cloudfront_log_s3bucket.bucket_domain_name}"`.  
+You must use something like `bucket = "MyExistingbucket"`.
 
 ## Basic Usage
 
 ```
 module "cloudfront_s3_origin" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.12.0"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.12.1"
 
   allowed_methods                 = ["GET", "HEAD"]
   bucket_logging                  = false
@@ -46,16 +46,22 @@ module "cloudfront_s3_origin" {
     },
   ]
 }
-*
 ```
 
 Full working references are available at [examples](examples)
+
+## Terraform 0.12 upgrade
+
+Several changes were made while adding terraform 0.12 compatibility.  
+The main change to be aware of is the `customer_header` variable  
+changed types from `list(string)` to `list(map(string))` to properly function with dynamic  
+configuration blocks.
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.1.0 |
+| aws | >= 2.7.0 |
 
 ## Inputs
 
@@ -71,7 +77,7 @@ Full working references are available at [examples](examples)
 | comment | Any comments you want to include about the distribution. (OPTIONAL) | `string` | `""` | no |
 | compress | Indicates whether CloudFront automatically compresses certain files for this cache behavior. (OPTIONAL) | `bool` | `false` | no |
 | custom\_error\_response | (Optional) - List of one or more custom error response element maps | `list(map(string))` | `[]` | no |
-| custom\_header | One or more sub-resources with name and value parameters that specify header data that will be sent to the origin | `list(string)` | `[]` | no |
+| custom\_header | One or more sub-resources with name and value parameters that specify header data that will be sent to the origin. For example: `[{name = "header1", value = "value1"}]`. | `list(map(string))` | `[]` | no |
 | default\_root\_object | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL. | `string` | `""` | no |
 | default\_ttl | The default time in seconds that objects stay in CloudFront caches before CloudFront forwards another request to your custom origin to determine whether the object has been updated. | `number` | `3600` | no |
 | domain\_name | The DNS domain name of either the S3 bucket, or web site of your custom origin. | `string` | `""` | no |

@@ -2,16 +2,16 @@
  * # aws-terraform-cloudfront_s3_origin
  *
  * This modules creates an AWS CloudFront distribution with S3 origin
- * Enable Logging
+ * ### Enable Logging
  * If you enable logging the bucket must already exist. You will get an error if you try
- * to use a dynamic bucket like "${aws_s3_bucket.cloudfront_log_s3bucket.bucket_domain_name}"
- * You must use something like bucket = "MyExistingbucket"
+ * to use a dynamic bucket like `"${aws_s3_bucket.cloudfront_log_s3bucket.bucket_domain_name}"`.
+ * You must use something like `bucket = "MyExistingbucket"`.
  *
  * ## Basic Usage
  *
  * ```
  * module "cloudfront_s3_origin" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.12.0"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudfront_s3_origin//?ref=v0.12.1"
  *
  *   allowed_methods                 = ["GET", "HEAD"]
  *   bucket_logging                  = false
@@ -47,21 +47,27 @@
  *     },
  *   ]
  * }
- *```
+ * ```
  *
  * Full working references are available at [examples](examples)
+ *
+ * ## Terraform 0.12 upgrade
+ *
+ * Several changes were made while adding terraform 0.12 compatibility.
+ * The main change to be aware of is the `customer_header` variable
+ * changed types from `list(string)` to `list(map(string))` to properly function with dynamic
+ * configuration blocks.
  */
 
 terraform {
   required_version = ">= 0.12"
 
   required_providers {
-    aws = ">= 2.1.0"
+    aws = ">= 2.7.0"
   }
 }
 
 locals {
-  bucket_logging_config = var.bucket_logging ? "enabled" : "disabled"
 
   tags = {
     Name            = var.origin_id
@@ -70,14 +76,9 @@ locals {
   }
 
   bucket_logging = {
-    enabled = [
-      {
-        bucket          = var.bucket
-        include_cookies = var.include_cookies
-        prefix          = var.prefix
-      },
-    ]
-    disabled = []
+    bucket          = var.bucket
+    include_cookies = var.include_cookies
+    prefix          = var.prefix
   }
 
   active_trusted_signers = coalescelist(
@@ -130,7 +131,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
   }
 
   dynamic "logging_config" {
-    for_each = local.bucket_logging[local.bucket_logging_config]
+    for_each = var.bucket_logging ? [local.bucket_logging] : []
     content {
       bucket          = logging_config.value.bucket
       include_cookies = lookup(logging_config.value, "include_cookies", null)
@@ -225,7 +226,7 @@ resource "aws_cloudfront_distribution" "cf_distribution_no_s3_origin_config" {
   }
 
   dynamic "logging_config" {
-    for_each = local.bucket_logging[local.bucket_logging_config]
+    for_each = var.bucket_logging ? [local.bucket_logging] : []
     content {
       bucket          = logging_config.value.bucket
       include_cookies = lookup(logging_config.value, "include_cookies", null)
