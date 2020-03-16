@@ -69,8 +69,8 @@ variable "custom_error_response" {
 }
 
 variable "custom_header" {
-  description = "One or more sub-resources with name and value parameters that specify header data that will be sent to the origin"
-  type        = list(string)
+  description = "One or more sub-resources with name and value parameters that specify header data that will be sent to the origin. For example: `[{name = \"header1\", value = \"value1\"}]`."
+  type        = list(map(string))
   default     = []
 }
 
