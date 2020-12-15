@@ -57,11 +57,16 @@ The main change to be aware of is the `customer_header` variable
 changed types from `list(string)` to `list(map(string))` to properly function with dynamic  
 configuration blocks.
 
+## AWS Provider 3.0 upgrade
+
+Due to the property renaming, `active_trusted_signers` is now `trusted_signers` and the  
+underlying property is an attribute driven map instead of the original list format
+
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.7.0 |
+| aws | >= 3.0.0 |
 
 ## Inputs
 
@@ -117,7 +122,6 @@ configuration blocks.
 
 | Name | Description |
 |------|-------------|
-| active\_trusted\_signers | The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs. |
 | arn | The ARN (Amazon Resource Name) for the distribution. |
 | caller\_reference | Internal value used by CloudFront to allow future updates to the distribution configuration. |
 | domain\_name | The domain name corresponding to the distribution. |
@@ -127,4 +131,5 @@ configuration blocks.
 | in\_progress\_validation\_batches | The number of invalidation batches currently in progress. |
 | last\_modified\_time | The date and time the distribution was last modified. |
 | status | The current status of the distribution. |
+| trusted\_signers | The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs. |
 

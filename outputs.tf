@@ -1,6 +1,6 @@
-output "active_trusted_signers" {
+output "trusted_signers" {
   description = "The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs."
-  value       = local.active_trusted_signers[0]
+  value       = local.trusted_signers[0]
 }
 
 output "arn" {

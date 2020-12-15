@@ -57,13 +57,18 @@
  * The main change to be aware of is the `customer_header` variable
  * changed types from `list(string)` to `list(map(string))` to properly function with dynamic
  * configuration blocks.
+ * 
+ * ## AWS Provider 3.0 upgrade
+ *
+ * Due to the property renaming, `active_trusted_signers` is now `trusted_signers` and the
+ * underlying property is an attribute driven map instead of the original list format
  */
 
 terraform {
   required_version = ">= 0.12"
 
   required_providers {
-    aws = ">= 2.7.0"
+    aws = ">= 3.0.0"
   }
 }
 
@@ -81,9 +86,9 @@ locals {
     prefix          = var.prefix
   }
 
-  active_trusted_signers = coalescelist(
-    aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.active_trusted_signers,
-    aws_cloudfront_distribution.cf_distribution.*.active_trusted_signers,
+  trusted_signers = coalescelist(
+    aws_cloudfront_distribution.cf_distribution_no_s3_origin_config.*.trusted_signers,
+    aws_cloudfront_distribution.cf_distribution.*.trusted_signers,
     [""],
   )
 }
