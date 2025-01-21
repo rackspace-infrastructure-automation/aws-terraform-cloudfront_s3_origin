@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This project is end of life. This repo will be deleted on June 2nd 2025.
+
 # aws-terraform-cloudfront\_s3\_origin
 
 This modules creates an AWS CloudFront distribution with S3 origin
